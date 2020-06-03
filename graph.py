@@ -2,7 +2,6 @@ import xmlparser
 import random
 import math
 import saveload
-from geopy.distance import geodesic
 
 def GetTree(finish_nodes, parents): # finish nodes from GetBuildingObjects, parents - Parent from Djikstra
     res = []
@@ -84,7 +83,7 @@ def GetGraphList():
             if (i < len(nodes) - 1):
                 node1_coords = coords[nodes[i]]
                 node2_coords = coords[nodes[i + 1]]
-                distance = round(geodesic(node1_coords, node2_coords).m, 4)
+                distance = round(1000000*((float(node1_coords[0])-float(node2_coords[0]))**2 + (float(node1_coords[1])-float(node2_coords[1]))**2), 4)
                 graph_list[nodes[i]].append((nodes[i+1],distance))
                 verts_in[nodes[i+1]].append(nodes[i])
                 if not oneway:
@@ -100,7 +99,7 @@ def GetGraphList():
         min_dist = float('inf')
         for node in road_list:
             node_coords = coords[node]
-            distance = geodesic(node_coords, node1_coords).m
+            distance = 1000000*((float(node1_coords[0])-float(node2_coords[0]))**2 + (float(node1_coords[1])-float(node2_coords[1]))**2)
             if (distance < min_dist):
                 min_dist = distance
                 nearest_node = node
@@ -131,7 +130,7 @@ def GetGraphList():
                         index = l.index(v)
                         node1_coords = coords[vert_in[0]]
                         node2_coords = coords[vert_out[0]]
-                        distance = round(geodesic(node1_coords, node2_coords).m, 4)
+                        distance = round(1000000*((float(node1_coords[0])-float(node2_coords[0]))**2 + (float(node1_coords[1])-float(node2_coords[1]))**2), 4)
                         graph_list[vert_in[0]].append((vert_out[0], distance))
                         graph_list[vert_in[0]].remove(graph_list[vert_in[0]][index])
                         verts_in[vert_out[0]].append(vert_in[0])
@@ -150,7 +149,7 @@ def GetGraphList():
                         index2 = l2.index(v)
                         node1_coords = coords[v1]
                         node2_coords = coords[v2]
-                        distance = round(geodesic(node1_coords, node2_coords).m, 4)
+                        distance = round(1000000*((float(node1_coords[0])-float(node2_coords[0]))**2 + (float(node1_coords[1])-float(node2_coords[1]))**2), 4)
                         graph_list[v1].append((v2, distance))
                         graph_list[v2].append((v1, distance))
                         graph_list[v1].remove(graph_list[v1][index1])
@@ -184,7 +183,7 @@ def GetGraphListWithRead():
             if (i < len(nodes) - 1):
                 node1_coords = coords[nodes[i]]
                 node2_coords = coords[nodes[i + 1]]
-                distance = round(geodesic(node1_coords, node2_coords).m, 4)
+                distance = round(1000000*((float(node1_coords[0])-float(node2_coords[0]))**2 + (float(node1_coords[1])-float(node2_coords[1]))**2), 4)
                 graph_list[nodes[i]].append((nodes[i+1],distance))
                 verts_in[nodes[i+1]].append(nodes[i])
                 if not oneway:
@@ -200,7 +199,7 @@ def GetGraphListWithRead():
         min_dist = float('inf')
         for node in road_list:
             node_coords = coords[node]
-            distance = geodesic(node_coords, node1_coords).m
+            distance = 1000000*((float(node1_coords[0])-float(node2_coords[0]))**2 + (float(node1_coords[1])-float(node2_coords[1]))**2)
             if (distance < min_dist):
                 min_dist = distance
                 nearest_node = node
@@ -231,7 +230,7 @@ def GetGraphListWithRead():
                         index = l.index(v)
                         node1_coords = coords[vert_in[0]]
                         node2_coords = coords[vert_out[0]]
-                        distance = round(geodesic(node1_coords, node2_coords).m, 4)
+                        distance = round(1000000*((float(node1_coords[0])-float(node2_coords[0]))**2 + (float(node1_coords[1])-float(node2_coords[1]))**2), 4)
                         graph_list[vert_in[0]].append((vert_out[0], distance))
                         graph_list[vert_in[0]].remove(graph_list[vert_in[0]][index])
                         verts_in[vert_out[0]].append(vert_in[0])
@@ -250,7 +249,7 @@ def GetGraphListWithRead():
                         index2 = l2.index(v)
                         node1_coords = coords[v1]
                         node2_coords = coords[v2]
-                        distance = round(geodesic(node1_coords, node2_coords).m, 4)
+                        distance = round(1000000*((float(node1_coords[0])-float(node2_coords[0]))**2 + (float(node1_coords[1])-float(node2_coords[1]))**2), 4)
                         graph_list[v1].append((v2, distance))
                         graph_list[v2].append((v1, distance))
                         graph_list[v1].remove(graph_list[v1][index1])
