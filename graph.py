@@ -1,6 +1,7 @@
 import xmlparser
 import random
 import math
+import saveload
 from geopy.distance import geodesic
 
 def GetTree(finish_nodes, parents): # finish nodes from GetBuildingObjects, parents - Parent from Djikstra
@@ -84,6 +85,96 @@ def GetGraphList():
                 if not oneway:
                     graph_list[nodes[i+1]].append((nodes[i],distance))
     buildings = xmlparser.getBuildings() + xmlparser.getFireStations()
+    road_list = graph_list.copy()
+    for building in buildings:
+        graph_list[building['id']] = []
+        node1_coords = coords[building['id']]
+        nearest_node = '-'
+        min_dist = float('inf')
+        for node in road_list:
+            node_coords = coords[node]
+            distance = geodesic(node_coords, node1_coords).m
+            if (distance < min_dist):
+                min_dist = distance
+                nearest_node = node
+                node2_coords = node_coords       
+        min_dist = round(min_dist, 4)
+        graph_list[building['id']].append((nearest_node,min_dist))
+        graph_list[nearest_node].append((building['id'], min_dist))
+
+    build_nodes = [ building['id'] for building in buildings]
+    # delete vertexes
+    for v in road_list.keys():
+        if len(graph_list[v]) <=2:
+            connect = False
+            for vert in graph_list[v]:
+                if vert[0] in build_nodes:
+                    connect = True
+                    break
+            if connect == False:
+                # oneway
+                if len(road_list[v]) == 1:
+                    vert_in = []
+                    vert_out = [ vert[0] for vert in graph_list[v]]
+                    for vert in graph_list.keys():
+                        if v in [ v_out[0] for v_out in graph_list[vert]]:
+                            vert_in.append(vert)
+                    if len(vert_in) == len(vert_out) and set(vert_in) != set(vert_out):
+                        l = [ v_out[0] for v_out in graph_list[vert_in[0]]]
+                        index = l.index(v)
+                        node1_coords = coords[vert_in[0]]
+                        node2_coords = coords[vert_out[0]]
+                        distance = round(geodesic(node1_coords, node2_coords).m, 4)
+                        graph_list[vert_in[0]].append((vert_out[0], distance))
+                        graph_list[vert_in[0]].remove(graph_list[vert_in[0]][index])
+                        del graph_list[v]
+                # twoways
+                if len(road_list[v]) == 2:
+                    vert_in = []
+                    vert_out = [ vert[0] for vert in graph_list[v]]
+                    for vert in graph_list.keys():
+                        if v in [ v_out[0] for v_out in graph_list[vert]]:
+                            vert_in.append(vert)
+                    if set(vert_in) == set(vert_out):
+                        v1 = vert_in[0]
+                        v2 = vert_in[1]
+                        l1 = [ v_out[0] for v_out in graph_list[v1]]
+                        l2 = [ v_out[0] for v_out in graph_list[v2]]
+                        index1 = l1.index(v)
+                        index2 = l2.index(v)
+                        node1_coords = coords[v1]
+                        node2_coords = coords[v2]
+                        distance = round(geodesic(node1_coords, node2_coords).m, 4)
+                        graph_list[v1].append((v2, distance))
+                        graph_list[v2].append((v1, distance))
+                        graph_list[v1].remove(graph_list[v1][index1])
+                        graph_list[v2].remove(graph_list[v2][index2])
+                        del graph_list[v]               
+    print('graph is builded')
+    return graph_list
+
+def GetGraphListWithRead():
+    graph_list = {}
+    roads = saveload.load_obj('roads')
+    coords = saveload.load_obj('coords')
+    buildings = saveload.load_obj('buildings') + saveload.load_obj('firestations')
+    for road in roads:
+        oneway = False
+        if 'oneway' in road.keys():
+            if road['oneway'] == 'yes':
+                oneway = True
+        nodes = road['nodes']
+        for node in nodes:
+            if node not in graph_list.keys():
+                graph_list[node] = []
+        for i in range(len(nodes)):
+            if (i < len(nodes) - 1):
+                node1_coords = coords[nodes[i]]
+                node2_coords = coords[nodes[i + 1]]
+                distance = round(geodesic(node1_coords, node2_coords).m, 4)
+                graph_list[nodes[i]].append((nodes[i+1],distance))
+                if not oneway:
+                    graph_list[nodes[i+1]].append((nodes[i],distance))
     road_list = graph_list.copy()
     for building in buildings:
         graph_list[building['id']] = []

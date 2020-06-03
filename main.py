@@ -29,7 +29,7 @@ def GetMatr(G):
 def main():
     #random.seed(5)
     print(xmlparser.getHighway())
-    g = graph.GetGraphList()
+    g = graph.GetGraphListWithRead()
     print(g)
     (a_id,b_id) = GetBuildingsObjects(4,8,2)
     print("sample of houses:")    
