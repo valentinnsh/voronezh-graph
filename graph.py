@@ -65,8 +65,11 @@ def GetSumMaxDist(Dist_list,nodes): # return sum of dist from root to nodes; Dis
 
 def GetGraphList():
     graph_list = {}
+    verts_in = {}
     roads = xmlparser.getRoads()
     coords = xmlparser.getNodesCoords()
+    buildings = xmlparser.getBuildings() + xmlparser.getFireStations()
+    print('phase1')
     for road in roads:
         oneway = False
         if 'oneway' in road.keys():
@@ -76,18 +79,22 @@ def GetGraphList():
         for node in nodes:
             if node not in graph_list.keys():
                 graph_list[node] = []
+                verts_in[node] = []
         for i in range(len(nodes)):
             if (i < len(nodes) - 1):
                 node1_coords = coords[nodes[i]]
                 node2_coords = coords[nodes[i + 1]]
                 distance = round(geodesic(node1_coords, node2_coords).m, 4)
                 graph_list[nodes[i]].append((nodes[i+1],distance))
+                verts_in[nodes[i+1]].append(nodes[i])
                 if not oneway:
                     graph_list[nodes[i+1]].append((nodes[i],distance))
-    buildings = xmlparser.getBuildings() + xmlparser.getFireStations()
+                    verts_in[nodes[i]].append(nodes[i+1])
+    print('phase2')
     road_list = graph_list.copy()
     for building in buildings:
         graph_list[building['id']] = []
+        verts_in[building['id']] = []
         node1_coords = coords[building['id']]
         nearest_node = '-'
         min_dist = float('inf')
@@ -101,8 +108,11 @@ def GetGraphList():
         min_dist = round(min_dist, 4)
         graph_list[building['id']].append((nearest_node,min_dist))
         graph_list[nearest_node].append((building['id'], min_dist))
+        verts_in[building['id']].append(nearest_node)
+        verts_in[nearest_node].append(building['id'])
 
     build_nodes = [ building['id'] for building in buildings]
+    print('phase3')
     # delete vertexes
     for v in road_list.keys():
         if len(graph_list[v]) <=2:
@@ -114,11 +124,8 @@ def GetGraphList():
             if connect == False:
                 # oneway
                 if len(road_list[v]) == 1:
-                    vert_in = []
+                    vert_in = verts_in[v]
                     vert_out = [ vert[0] for vert in graph_list[v]]
-                    for vert in graph_list.keys():
-                        if v in [ v_out[0] for v_out in graph_list[vert]]:
-                            vert_in.append(vert)
                     if len(vert_in) == len(vert_out) and set(vert_in) != set(vert_out):
                         l = [ v_out[0] for v_out in graph_list[vert_in[0]]]
                         index = l.index(v)
@@ -127,14 +134,13 @@ def GetGraphList():
                         distance = round(geodesic(node1_coords, node2_coords).m, 4)
                         graph_list[vert_in[0]].append((vert_out[0], distance))
                         graph_list[vert_in[0]].remove(graph_list[vert_in[0]][index])
+                        verts_in[vert_out[0]].append(vert_in[0])
+                        verts_in[vert_out[0]].remove(v)
                         del graph_list[v]
                 # twoways
                 if len(road_list[v]) == 2:
-                    vert_in = []
+                    vert_in = verts_in[v]
                     vert_out = [ vert[0] for vert in graph_list[v]]
-                    for vert in graph_list.keys():
-                        if v in [ v_out[0] for v_out in graph_list[vert]]:
-                            vert_in.append(vert)
                     if set(vert_in) == set(vert_out):
                         v1 = vert_in[0]
                         v2 = vert_in[1]
@@ -149,15 +155,21 @@ def GetGraphList():
                         graph_list[v2].append((v1, distance))
                         graph_list[v1].remove(graph_list[v1][index1])
                         graph_list[v2].remove(graph_list[v2][index2])
+                        verts_in[v1].append(v2)
+                        verts_in[v2].append(v1)
+                        verts_in[v1].remove(v)
+                        verts_in[v2].remove(v)
                         del graph_list[v]               
     print('graph is builded')
     return graph_list
 
 def GetGraphListWithRead():
     graph_list = {}
+    verts_in = {}
     roads = saveload.load_obj('roads')
     coords = saveload.load_obj('coords')
     buildings = saveload.load_obj('buildings') + saveload.load_obj('firestations')
+    print('phase1')
     for road in roads:
         oneway = False
         if 'oneway' in road.keys():
@@ -167,17 +179,22 @@ def GetGraphListWithRead():
         for node in nodes:
             if node not in graph_list.keys():
                 graph_list[node] = []
+                verts_in[node] = []
         for i in range(len(nodes)):
             if (i < len(nodes) - 1):
                 node1_coords = coords[nodes[i]]
                 node2_coords = coords[nodes[i + 1]]
                 distance = round(geodesic(node1_coords, node2_coords).m, 4)
                 graph_list[nodes[i]].append((nodes[i+1],distance))
+                verts_in[nodes[i+1]].append(nodes[i])
                 if not oneway:
                     graph_list[nodes[i+1]].append((nodes[i],distance))
+                    verts_in[nodes[i]].append(nodes[i+1])
+    print('phase2')
     road_list = graph_list.copy()
     for building in buildings:
         graph_list[building['id']] = []
+        verts_in[building['id']] = []
         node1_coords = coords[building['id']]
         nearest_node = '-'
         min_dist = float('inf')
@@ -191,8 +208,11 @@ def GetGraphListWithRead():
         min_dist = round(min_dist, 4)
         graph_list[building['id']].append((nearest_node,min_dist))
         graph_list[nearest_node].append((building['id'], min_dist))
+        verts_in[building['id']].append(nearest_node)
+        verts_in[nearest_node].append(building['id'])
 
     build_nodes = [ building['id'] for building in buildings]
+    print('phase3')
     # delete vertexes
     for v in road_list.keys():
         if len(graph_list[v]) <=2:
@@ -204,11 +224,8 @@ def GetGraphListWithRead():
             if connect == False:
                 # oneway
                 if len(road_list[v]) == 1:
-                    vert_in = []
+                    vert_in = verts_in[v]
                     vert_out = [ vert[0] for vert in graph_list[v]]
-                    for vert in graph_list.keys():
-                        if v in [ v_out[0] for v_out in graph_list[vert]]:
-                            vert_in.append(vert)
                     if len(vert_in) == len(vert_out) and set(vert_in) != set(vert_out):
                         l = [ v_out[0] for v_out in graph_list[vert_in[0]]]
                         index = l.index(v)
@@ -217,14 +234,13 @@ def GetGraphListWithRead():
                         distance = round(geodesic(node1_coords, node2_coords).m, 4)
                         graph_list[vert_in[0]].append((vert_out[0], distance))
                         graph_list[vert_in[0]].remove(graph_list[vert_in[0]][index])
+                        verts_in[vert_out[0]].append(vert_in[0])
+                        verts_in[vert_out[0]].remove(v)
                         del graph_list[v]
                 # twoways
                 if len(road_list[v]) == 2:
-                    vert_in = []
+                    vert_in = verts_in[v]
                     vert_out = [ vert[0] for vert in graph_list[v]]
-                    for vert in graph_list.keys():
-                        if v in [ v_out[0] for v_out in graph_list[vert]]:
-                            vert_in.append(vert)
                     if set(vert_in) == set(vert_out):
                         v1 = vert_in[0]
                         v2 = vert_in[1]
@@ -239,6 +255,10 @@ def GetGraphListWithRead():
                         graph_list[v2].append((v1, distance))
                         graph_list[v1].remove(graph_list[v1][index1])
                         graph_list[v2].remove(graph_list[v2][index2])
+                        verts_in[v1].append(v2)
+                        verts_in[v2].append(v1)
+                        verts_in[v1].remove(v)
+                        verts_in[v2].remove(v)
                         del graph_list[v]               
     print('graph is builded')
     return graph_list
