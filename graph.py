@@ -1,6 +1,5 @@
 import xmlparser
 import random
-import math
 import saveload
 
 def GetTree(finish_nodes, parents): # finish nodes from GetBuildingObjects, parents - Parent from Djikstra
@@ -78,6 +77,7 @@ def GetGraphList():
         for node in nodes:
             if node not in graph_list.keys():
                 graph_list[node] = []
+            if node not in verts_in.keys():
                 verts_in[node] = []
         for i in range(len(nodes)):
             if (i < len(nodes) - 1):
@@ -136,6 +136,7 @@ def GetGraphList():
                         verts_in[vert_out[0]].append(vert_in[0])
                         verts_in[vert_out[0]].remove(v)
                         del graph_list[v]
+                        del verts_in[v]                         
                 # twoways
                 elif len(graph_list[v]) == 2:
                     vert_in = verts_in[v]
@@ -158,7 +159,8 @@ def GetGraphList():
                         verts_in[v2].append(v1)
                         verts_in[v1].remove(v)
                         verts_in[v2].remove(v)
-                        del graph_list[v]               
+                        del graph_list[v]
+                        del verts_in[v]                
     print('graph is builded')
     return graph_list
 
@@ -178,6 +180,7 @@ def GetGraphListWithRead():
         for node in nodes:
             if node not in graph_list.keys():
                 graph_list[node] = []
+            if node not in verts_in.keys():
                 verts_in[node] = []
         for i in range(len(nodes)):
             if (i < len(nodes) - 1):
@@ -237,6 +240,7 @@ def GetGraphListWithRead():
                         verts_in[vert_out[0]].remove(v)
                         print(v)
                         del graph_list[v]
+                        del verts_in[v]
                 # twoways
                 elif len(graph_list[v]) == 2:
                     vert_in = verts_in[v]
@@ -260,14 +264,11 @@ def GetGraphListWithRead():
                         verts_in[v1].remove(v)
                         verts_in[v2].remove(v)
                         print(v)
-                        del graph_list[v]               
+                        del graph_list[v]
+                        del verts_in[v]               
     print('graph is builded')
     return graph_list
 
-def GetWeiths():
-    houses = xmlparser.getBuildingsByType(type='house') + xmlparser.getBuildingsByType(type='apartments')
-    res = {house['id']: 1 for house in houses}
-    return res
 
 def Dijkstra(G, start_node): # Djikstra alg, return patents and dist for each node in graph list (G) from start_node 
     dist = {}
