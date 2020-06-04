@@ -140,7 +140,7 @@ def GetGraphList():
                 if len(road_list[v]) == 2:
                     vert_in = verts_in[v]
                     vert_out = [ vert[0] for vert in graph_list[v]]
-                    if set(vert_in) == set(vert_out):
+                    if len(vert_in) == len(vert_out) and set(vert_in) == set(vert_out):
                         v1 = vert_in[0]
                         v2 = vert_in[1]
                         l1 = [ v_out[0] for v_out in graph_list[v1]]
@@ -240,7 +240,7 @@ def GetGraphListWithRead():
                 if len(road_list[v]) == 2:
                     vert_in = verts_in[v]
                     vert_out = [ vert[0] for vert in graph_list[v]]
-                    if set(vert_in) == set(vert_out):
+                    if len(vert_in) == len(vert_out) and set(vert_in) == set(vert_out):
                         v1 = vert_in[0]
                         v2 = vert_in[1]
                         l1 = [ v_out[0] for v_out in graph_list[v1]]
