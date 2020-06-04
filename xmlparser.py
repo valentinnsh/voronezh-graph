@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET 
 
-tree = ET.parse('planet.osm')
+tree = ET.parse('planet47mb.osm')
 db = tree.getroot()
 
 

@@ -88,7 +88,6 @@ def GetGraphList():
     road_list = graph_list.copy()
     for building in buildings:
         graph_list[building['id']] = []
-        verts_in[building['id']] = []
         node1_coords = coords[building['id']]
         nearest_node = '-'
         min_dist = float('inf')
@@ -183,7 +182,6 @@ def GetGraphListWithRead():
     road_list = graph_list.copy()
     for building in buildings:
         graph_list[building['id']] = []
-        verts_in[building['id']] = []
         node1_coords = coords[building['id']]
         nearest_node = '-'
         min_dist = float('inf')

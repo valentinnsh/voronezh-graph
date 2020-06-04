@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import graph
 import xmlparser
-from geopy.distance import geodesic
 
 def Get_k_Clusters(nodes, G, k): # creates a partition into k clusters, result = list of k clusters 
     res = [ [node] for node in nodes]
@@ -243,7 +242,7 @@ def Find_Centers(clusters, G): # return centers of clusters
         min_dist = float('inf')
         for node in G:
             node_coords = coords[node]
-            distance = geodesic(node_coords, obj_coords).m
+            distance = 1000000*((float(node_coords[0])-obj_coords[0])**2 + (float(node_coords[1])-obj_coords[1])**2)
             if (distance < min_dist):
                 min_dist = distance
                 result = node

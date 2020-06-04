@@ -1,5 +1,6 @@
 import xmlparser
 import saveload as sl
+import random
 import graph
 
 def calc_basics_demo(recalc = False):
@@ -8,12 +9,18 @@ def calc_basics_demo(recalc = False):
         firestations = xmlparser.getFireStations()
         roads = xmlparser.getRoads()
         coords = xmlparser.getNodesCoords()
+        weights = {}
+        for building in buildings:
+            weights[building['id']] = 1.
+        for firestation in firestations:
+            weights[firestation['id']] = random.random() + 1
 
 
         sl.save_obj(firestations, "firestations")
         sl.save_obj(buildings, "buildings")
         sl.save_obj(roads, "roads")
         sl.save_obj(coords, "coords")
+        sl.save_obj(weights, "weights")
 
         print("demo files recalculated")
 
@@ -28,12 +35,18 @@ def calc_basics_47(recalc=False):
         firestations = xmlparser.getFireStations()
         roads = xmlparser.getRoads()
         coords = xmlparser.getNodesCoords()
+        weights = {}
+        for building in buildings:
+            weights[building['id']] = 1.
+        for firestation in firestations:
+            weights[firestation['id']] = random.random() + 1
 
 
         sl.save_obj(firestations, "firestations")
         sl.save_obj(buildings, "buildings")
         sl.save_obj(roads, "roads")
         sl.save_obj(coords, "coords")
+        sl.save_obj(weights, "weights")
 
         print("files recalculated")
 

@@ -2,6 +2,7 @@ import xmlparser
 import graph
 import random
 import clusters
+import saveload as sl
 from scipy.cluster import hierarchy
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,27 +10,27 @@ import numpy as np
 
 def GetBuildingsObjects(sd, b_n, o_n):
     random.seed(sd)
-    build = xmlparser.getBuildingsByType(type='house')
-    objects = xmlparser.getBuildingsByType(type='apartments')
-    build_choice = random.sample(build, b_n)
+    builds = sl.load_obj('buildings')
+    objects = sl.load_obj('firestations')
+    builds_choice = random.sample(builds, b_n)
     objects_choice = random.sample(objects, o_n)
-    res_build = [ b['id'] for b in build_choice ]
+    res_builds = [ b['id'] for b in builds_choice ]
     res_objects = [ o['id'] for o in objects_choice]
-    return res_build, res_objects
+    return res_builds, res_objects
 
 def GetMatr(G):
     nodes = [node for node in G.keys()]
     res = [[0 for node2 in nodes] for node1 in nodes]
     for n_1 in nodes:
         for n_2 in G[n_1]:
-            res[nodes.index(n_1)][nodes.index(n_2[0])] = 1 
+            res[nodes.index(n_1)][nodes.index(n_2[0])] = n_2[1] 
     return np.matrix(res)
 
 
 def main():
     #random.seed(5)
     print(xmlparser.getHighway())
-    g = graph.GetGraphListWithRead()
+    g = graph.GetGraphList()
     print(g)
     (a_id,b_id) = GetBuildingsObjects(4,8,2)
     print("sample of houses:")    
