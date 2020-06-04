@@ -10,6 +10,7 @@ def Get_k_Clusters(nodes, G, k): # creates a partition into k clusters, result =
     for node in nodes:
         f_nodes = list(set(nodes) - set([node]))
         (D,Parent) = graph.DijkstraWithFinishNodes(G,node, f_nodes)
+        graph.GetWeightsDist(D, f_nodes)
         dist[node] = {}
         for n_1 in nodes:
             if n_1 == node:
@@ -57,6 +58,7 @@ def Get_Dendro_matr(nodes, G): # creates matrix of linkage for scipy.hierarchy.d
     for node in nodes:
         f_nodes = list(set(nodes) - set([node]))
         (D,Parent) = graph.DijkstraWithFinishNodes(G,node, f_nodes)
+        graph.GetWeightsDist(D, f_nodes)
         dist[node] = {}
         for n_1 in nodes:
             if n_1 == node:
@@ -107,6 +109,7 @@ def Get_Clusters(nodes, G): # creates a partition into 5,3 and 2 clusters, also 
     for node in nodes:
         f_nodes = list(set(nodes) - set([node]))
         (D,Parent) = graph.DijkstraWithFinishNodes(G,node, f_nodes)
+        graph.GetWeightsDist(D, f_nodes)
         dist[node] = {}
         for n_1 in nodes:
             if n_1 == node:

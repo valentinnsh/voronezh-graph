@@ -76,6 +76,5 @@ def main():
     dn = hierarchy.dendrogram(clusters.Get_Dendro_matr(a_id, g))
     plt.savefig('foo.pdf')
 
-
 if __name__ == "__main__":
     main()

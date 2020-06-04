@@ -294,5 +294,12 @@ def DijkstraWithFinishNodes(G, start_node, finish_nodes): # Djikstra alg, return
             f_nodes.remove(curr_node)
     return (dist, parent)
 
+def GetWeightsDist(Dist_list, f_nodes):
+    weights = saveload.load_obj('weights')
+    for f_node in f_nodes:
+        if f_node in weights.keys():
+            Dist_list[f_node] *= weights[f_node]
+        else: 
+            Dist_list[f_node] *= random.random()
 
 
