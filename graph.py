@@ -122,7 +122,7 @@ def GetGraphList():
                     break
             if connect == False:
                 # oneway
-                if len(road_list[v]) == 1:
+                if len(graph_list[v]) == 1:
                     vert_in = verts_in[v]
                     vert_out = [ vert[0] for vert in graph_list[v]]
                     if len(vert_in) == len(vert_out) and set(vert_in) != set(vert_out):
@@ -137,7 +137,7 @@ def GetGraphList():
                         verts_in[vert_out[0]].remove(v)
                         del graph_list[v]
                 # twoways
-                if len(road_list[v]) == 2:
+                if len(graph_list[v]) == 2:
                     vert_in = verts_in[v]
                     vert_out = [ vert[0] for vert in graph_list[v]]
                     if len(vert_in) == len(vert_out) and set(vert_in) == set(vert_out):
@@ -235,6 +235,7 @@ def GetGraphListWithRead():
                         graph_list[vert_in[0]].remove(graph_list[vert_in[0]][index])
                         verts_in[vert_out[0]].append(vert_in[0])
                         verts_in[vert_out[0]].remove(v)
+                        print(v)
                         del graph_list[v]
                 # twoways
                 if len(road_list[v]) == 2:
@@ -258,6 +259,7 @@ def GetGraphListWithRead():
                         verts_in[v2].append(v1)
                         verts_in[v1].remove(v)
                         verts_in[v2].remove(v)
+                        print(v)
                         del graph_list[v]               
     print('graph is builded')
     return graph_list
