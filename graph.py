@@ -92,12 +92,11 @@ def GetGraphList():
         nearest_node = '-'
         min_dist = float('inf')
         for node in road_list:
-            node_coords = coords[node]
+            node2_coords = coords[node]
             distance = 1000000*((float(node1_coords[0])-float(node2_coords[0]))**2 + (float(node1_coords[1])-float(node2_coords[1]))**2)
             if (distance < min_dist):
                 min_dist = distance
-                nearest_node = node
-                node2_coords = node_coords       
+                nearest_node = node       
         min_dist = round(min_dist, 4)
         graph_list[building['id']].append((nearest_node,min_dist))
         graph_list[nearest_node].append((building['id'], min_dist))
@@ -186,12 +185,11 @@ def GetGraphListWithRead():
         nearest_node = '-'
         min_dist = float('inf')
         for node in road_list:
-            node_coords = coords[node]
+            node2_coords = coords[node]
             distance = 1000000*((float(node1_coords[0])-float(node2_coords[0]))**2 + (float(node1_coords[1])-float(node2_coords[1]))**2)
             if (distance < min_dist):
                 min_dist = distance
-                nearest_node = node
-                node2_coords = node_coords       
+                nearest_node = node     
         min_dist = round(min_dist, 4)
         graph_list[building['id']].append((nearest_node,min_dist))
         graph_list[nearest_node].append((building['id'], min_dist))
