@@ -6,9 +6,9 @@ import saveload as sl
 from scipy.cluster import hierarchy
 import matplotlib.pyplot as plt
 import numpy as np
+import argparse
 
-
-def GetBuildingsObjects(sd, b_n, o_n):
+def GetBuildingsObjects(sd, b_n, o_n): #sd - seed(integer), buildings number, o- firestation number
     random.seed(sd)
     builds = sl.load_obj('buildings')
     objects = sl.load_obj('firestations')
@@ -23,23 +23,23 @@ def GetMatr(G):
     res = [[0 for node2 in nodes] for node1 in nodes]
     for n_1 in nodes:
         for n_2 in G[n_1]:
-            res[nodes.index(n_1)][nodes.index(n_2[0])] = n_2[1] 
+            res[nodes.index(n_1)][nodes.index(n_2[0])] = n_2[1]
     return np.matrix(res)
 
 
-def main():
+def old_main():
     #random.seed(5)
     print(xmlparser.getHighway())
     g = graph.GetGraphList()
     print(g)
     (a_id,b_id) = GetBuildingsObjects(4,8,2)
-    print("sample of houses:")    
+    print("sample of houses:")
     print(a_id)
     print(b_id)
     print('Big Dijkstra:')
     (D,Parent) = graph.Dijkstra(g,b_id[0])
     tree = graph.GetTree(a_id, Parent)
-    print("tree from b_id[0] (one of the objects) to a_id (sample of houses):")    
+    print("tree from b_id[0] (one of the objects) to a_id (sample of houses):")
     print(tree)
     print("length of previous tree:")
     print(graph.GetSumOfTree(tree,g))
@@ -53,7 +53,7 @@ def main():
     (D,Parent) = graph.DijkstraWithFinishNodes(g,b_id[0],a_id)
     print(a_id)
     tree = graph.GetTree(a_id, Parent)
-    print("tree from b_id[0] (one of the objects) to a_id (sample of houses):")    
+    print("tree from b_id[0] (one of the objects) to a_id (sample of houses):")
     print(tree)
     print("length of previous tree:")
     print(graph.GetSumOfTree(tree,g))
@@ -76,5 +76,20 @@ def main():
     dn = hierarchy.dendrogram(clusters.Get_Dendro_matr(a_id, g))
     plt.savefig('foo.pdf')
 
+
+def main(args):
+    if(args.show_fs):
+        firestations = sl.load_obj("firestations")
+        for station in firestations:
+            print(station['id'], station['name'])
 if __name__ == "__main__":
-    main()
+
+    parser = argparse.ArgumentParser()
+
+    # Show fire stations and show buildings
+    parser.add_argument("-sf", "--show_fs", help="Show all firestations", action='store_true')
+    #parser.add_argument("-sb", "--show_build", help="Show all buildings", action = 'store_true')
+
+    args = parser.parse_args()
+
+    main(args)
