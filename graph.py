@@ -122,11 +122,13 @@ def GetGraphList():
                     if len(vert_in) == len(vert_out) and set(vert_in) != set(vert_out):
                         l = [ v_out[0] for v_out in graph_list[vert_in[0]]]
                         index = l.index(v)
+                        vert_del = graph_list[vert_in[0]][index]
                         node1_coords = coords[vert_in[0]]
                         node2_coords = coords[vert_out[0]]
                         distance = round(1000000*((float(node1_coords[0])-float(node2_coords[0]))**2 + (float(node1_coords[1])-float(node2_coords[1]))**2), 4)
                         graph_list[vert_in[0]].append((vert_out[0], distance))
-                        graph_list[vert_in[0]].remove(graph_list[vert_in[0]][index])
+                        while vert_del in graph_list[vert_in[0]]:
+                            graph_list[vert_in[0]].remove(vert_del)
                         del graph_list[v]
                 # twoways
                 elif len(graph_list[v]) == 2:
@@ -142,13 +144,17 @@ def GetGraphList():
                         l2 = [ v_out[0] for v_out in graph_list[v2]]
                         index1 = l1.index(v)
                         index2 = l2.index(v)
+                        vert_del1 = graph_list[v1][index1]
+                        vert_del2 = graph_list[v2][index2]
                         node1_coords = coords[v1]
                         node2_coords = coords[v2]
                         distance = round(1000000*((float(node1_coords[0])-float(node2_coords[0]))**2 + (float(node1_coords[1])-float(node2_coords[1]))**2), 4)
                         graph_list[v1].append((v2, distance))
                         graph_list[v2].append((v1, distance))
-                        graph_list[v1].remove(graph_list[v1][index1])
-                        graph_list[v2].remove(graph_list[v2][index2])
+                        while vert_del1 in graph_list[v1]:
+                            graph_list[v1].remove(vert_del1)
+                        while vert_del2 in graph_list[v2]:
+                            graph_list[v2].remove(vert_del2)                        
                         del graph_list[v]
     print('graph is builded')
     return graph_list
@@ -215,11 +221,13 @@ def GetGraphListWithRead():
                     if len(vert_in) == len(vert_out) and set(vert_in) != set(vert_out):
                         l = [ v_out[0] for v_out in graph_list[vert_in[0]]]
                         index = l.index(v)
+                        vert_del = graph_list[vert_in[0]][index]
                         node1_coords = coords[vert_in[0]]
                         node2_coords = coords[vert_out[0]]
                         distance = round(1000000*((float(node1_coords[0])-float(node2_coords[0]))**2 + (float(node1_coords[1])-float(node2_coords[1]))**2), 4)
                         graph_list[vert_in[0]].append((vert_out[0], distance))
-                        graph_list[vert_in[0]].remove(graph_list[vert_in[0]][index])
+                        while vert_del in graph_list[vert_in[0]]:
+                            graph_list[vert_in[0]].remove(vert_del)
                         del graph_list[v]
                 # twoways
                 elif len(graph_list[v]) == 2:
@@ -235,13 +243,17 @@ def GetGraphListWithRead():
                         l2 = [ v_out[0] for v_out in graph_list[v2]]
                         index1 = l1.index(v)
                         index2 = l2.index(v)
+                        vert_del1 = graph_list[v1][index1]
+                        vert_del2 = graph_list[v2][index2]
                         node1_coords = coords[v1]
                         node2_coords = coords[v2]
                         distance = round(1000000*((float(node1_coords[0])-float(node2_coords[0]))**2 + (float(node1_coords[1])-float(node2_coords[1]))**2), 4)
                         graph_list[v1].append((v2, distance))
                         graph_list[v2].append((v1, distance))
-                        graph_list[v1].remove(graph_list[v1][index1])
-                        graph_list[v2].remove(graph_list[v2][index2])
+                        while vert_del1 in graph_list[v1]:
+                            graph_list[v1].remove(vert_del1)
+                        while vert_del2 in graph_list[v2]:
+                            graph_list[v2].remove(vert_del2)                        
                         del graph_list[v]
     print('graph is builded')
     return graph_list
