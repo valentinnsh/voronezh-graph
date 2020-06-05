@@ -98,18 +98,29 @@ def old_main():
 
 
 def main(args):
+
+    # Show fire stations and show buildings
     if(args.show_fs):
         firestations = sl.load_obj("firestations")
         for station in firestations:
             print(station['id'], station['name'])
+
+    # Get Info By ID
+    if(args.info is not None):
+        try:
+            res = GetInfo(args.info)
+            for i in res:
+                print(i, res[i])
+
+        except UnboundLocalError:
+            print("Wrong id. Check it and try again.")
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
 
-    # Show fire stations and show buildings
     parser.add_argument("-sf", "--show_fs", help="Show all firestations", action='store_true')
     #parser.add_argument("-sb", "--show_build", help="Show all buildings", action = 'store_true')
-
+    parser.add_argument("-i", "--info", help="Get info by id", type = str)
     args = parser.parse_args()
 
     main(args)
