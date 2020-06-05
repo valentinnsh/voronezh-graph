@@ -98,6 +98,7 @@ def old_main():
 
 
 def main(args):
+    G = sl.load_obj("adj_list_47")
 
     # Show fire stations and show buildings
     if(args.show_fs):
@@ -114,6 +115,97 @@ def main(args):
 
         except UnboundLocalError:
             print("Wrong id. Check it and try again.")
+        except:
+            print("Oops, something went wrong")
+
+
+    #First half of task.
+    if(args.pick_fs_and_bds is not None):
+
+        m = args.pick_fs_and_bds[0]
+        n = args.pick_fs_and_bds[1]
+        # Pick random m firestations and n buildings
+        builds, stations = GetBuildingsObjects(args.pick_fs_and_bds[2],n ,m)
+
+        # Now to analyse the distance values we have t orun DijkstraWithFinishNodes for all stations and all buildings
+
+        res_builds = {}
+        res_stations = {}
+        mindist_from_builds = {}
+        mindist_from_stations = {}
+
+        if(args.no_recalc_values is None):
+            for b in builds:
+                res_builds[b] = graph.DijkstraWithFinishNodes(G, b, stations)
+                dist, minfb = graph.GetMinDist(res_builds[b][0], stations)
+                mindist_from_builds[b] = (dist,minfb)
+
+                print("Для дома c id = ", b, " ближайшая пожарная станция - ", GetInfo(minfb[0])['name'], " id = ", minfb)
+                print("-----------------------------------------------------------------------------------------------------------")
+
+
+                print("\n")
+            for st in stations:
+                res_stations[st] = graph.DijkstraWithFinishNodes(G,st, builds)
+                dist, minfs = graph.GetMinDist(res_stations[st][0], builds)
+                mindist_from_stations[st] = (dist,minfs)
+
+                print("Для пожарной станции ", GetInfo(st)["name"], " id = ", st, " ближайший дом c id = ", minfs)
+                print("-----------------------------------------------------------------------------------------------------------")
+
+            sl.save_obj(res_builds,"res_builds")
+            sl.save_obj(res_stations, "res_stations")
+            sl.save_obj(mindist_from_stations, "mindist_from_stations")
+            sl.save_obj(mindist_from_builds, "mindist_from_builds")
+
+        else:
+            res_builds = sl.load_obj("res_builds")
+            res_stations = sl.load_obj("res_stations")
+            mindist_from_builds = sl.load_obj("mindist_from_builds")
+            mindist_from_stations = sl.load_obj("mindist_from_stations")
+
+        # Ищем минимум расстояния туда+обратно
+        if(args.both_sides is not None):
+            for b in builds:
+                min_dist_sum = float('inf')
+                closest_station = None
+                for st in stations:
+                    if(min_dist_sum > res_stations[st][0][b]+res_builds[b][0][st]):
+                        min_dist_sum = res_stations[st][0][b]+res_builds[b][0][st]
+                        closest_station = st
+
+                print(f"Для дома с id = {b} ближайшая(по сумме туда-обратно) пожарная станция {GetInfo(closest_station)['name']}")
+
+
+        #Для какого объекта инфраструктуры сумма кратчайших расстояний от него до всех домов минимальна.
+        if(args.sum_of_paths is not None):
+            min_of_sum = float('inf')
+            minel = None
+            for st in stations:
+                currsum = 0
+                for s in res_stations[st][0]:
+                    currsum+=res_stations[st][0][s]
+
+                if(min_of_sum < currsum):
+                    min_of_sum = currsum
+                    minel = st
+
+            print(f"Для объекта {GetInfo(st)['name']}, id = {st} сумма кратчайших расстояний от него до всех домов минимальна")
+
+        #Для какого объекта инфраструктуры построенное дерево кратчайших путей имеет минимальный вес
+        if(args.sum_of_tree is not None):
+            min_of_tree = float('inf')
+            mintree = None
+            for st in stations:
+                tree = graph.GetTree(builds, res_stations[st][1])
+                sumoftree = graph.GetSumOfTree(tree,G)
+                if(min_of_tree < sumoftree):
+                    min_of_tree = sumoftree
+                    mintree = st
+
+            print(f"Дерево кратчайших путей имеет минимальный вес для {GetInfo(st)['name']}, id = {st}")
+
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
@@ -121,6 +213,12 @@ if __name__ == "__main__":
     parser.add_argument("-sf", "--show_fs", help="Show all firestations", action='store_true')
     #parser.add_argument("-sb", "--show_build", help="Show all buildings", action = 'store_true')
     parser.add_argument("-i", "--info", help="Get info by id", type = str)
+    parser.add_argument("-pfb", "--pick_fs_and_bds", help="Write firestation number, than buildings number, than seed.", type = int, nargs=3)
+    parser.add_argument("--sum_of_tree", help='Find firestation with lowest sum of tree of shortest paths', action='store_true', default = None)
+    parser.add_argument("--sum_of_paths", help='Find firestation with lowest sum of shortest paths', action='store_true', default = None)
+    parser.add_argument("--both_sides", help='Find min for both sides', action='store_true', default = None)
+    parser.add_argument("--no_recalc_values", action = "store_true", default = None)
+
     args = parser.parse_args()
 
     main(args)
