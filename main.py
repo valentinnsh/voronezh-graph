@@ -18,6 +18,23 @@ def GetBuildingsObjects(sd, b_n, o_n): #sd - seed(integer), buildings number, o-
     res_objects = [ o['id'] for o in objects_choice]
     return res_builds, res_objects
 
+def GetInfo(id):
+    builds = sl.load_obj('buildings')
+    firestations = sl.load_obj('firestations')
+    roads = sl.load_obj('roads')
+    for build in builds:
+        if build['id'] == id:
+            res = build
+    for firestation in firestations:
+        if firestation['id'] == id:
+            res = firestation
+    for road in roads:
+        for nd in road['nodes']:
+            if nd == id:
+                res = road
+    return res
+
+
 def GetMatr(G):
     nodes = [node for node in G.keys()]
     res = [[0 for node2 in nodes] for node1 in nodes]
@@ -29,6 +46,8 @@ def GetMatr(G):
 
 def old_main():
     #random.seed(5)
+    print(GetInfo('563305885'))
+    '''
     print(xmlparser.getHighway())
     g = graph.GetGraphList()
     print(g)
@@ -75,6 +94,7 @@ def old_main():
     plt.figure()
     dn = hierarchy.dendrogram(clusters.Get_Dendro_matr(a_id, g))
     plt.savefig('foo.pdf')
+    '''
 
 
 def main(args):
