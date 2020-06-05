@@ -100,7 +100,7 @@ def old_main():
 def main(args):
     G = sl.load_obj("adj_list_47")
 
-    # Show fire stations and show buildings
+    # Show fire stations
     if(args.show_fs):
         firestations = sl.load_obj("firestations")
         for station in firestations:
@@ -144,7 +144,7 @@ def main(args):
                 print("-----------------------------------------------------------------------------------------------------------")
 
 
-                print("\n")
+            print("\n")
             for st in stations:
                 res_stations[st] = graph.DijkstraWithFinishNodes(G,st, builds)
                 dist, minfs = graph.GetMinDist(res_stations[st][0], builds)
@@ -163,6 +163,7 @@ def main(args):
             res_stations = sl.load_obj("res_stations")
             mindist_from_builds = sl.load_obj("mindist_from_builds")
             mindist_from_stations = sl.load_obj("mindist_from_stations")
+
 
         # Ищем минимум расстояния туда+обратно
         if(args.both_sides is not None):
@@ -205,6 +206,21 @@ def main(args):
 
             print(f"Дерево кратчайших путей имеет минимальный вес для {GetInfo(st)['name']}, id = {st}")
 
+        # Определить, какой из объектов расположен так, что расстояние между ним и самым дальним домом минимально
+        if(args.mindist_fs is not None):
+            mindist_global = float('inf')
+            resfs = None
+            for st in stations:
+                # Ищем максимально удаленый дом
+                maxdist = 0
+                for s in res_stations[st][0]:
+                    if maxdist < res_stations[st][0][s] and res_stations[st][0][s] != float('inf'):
+                        maxdist = res_stations[st][0][s]
+                if maxdist < mindist_global:
+                    mindist_global = maxdist
+                    resfs = st
+            print(f"Объект {GetInfo(resfs)['name']} с id = {resfs} расположен так, что расстояние между ним и самым дальним домом минимально")
+
 
 if __name__ == "__main__":
 
@@ -218,7 +234,7 @@ if __name__ == "__main__":
     parser.add_argument("--sum_of_paths", help='Find firestation with lowest sum of shortest paths', action='store_true', default = None)
     parser.add_argument("--both_sides", help='Find min for both sides', action='store_true', default = None)
     parser.add_argument("--no_recalc_values", action = "store_true", default = None)
-
+    parser.add_argument("--mindist_fs", action = "store_true", default = None)
     args = parser.parse_args()
 
     main(args)
