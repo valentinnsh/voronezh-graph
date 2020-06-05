@@ -58,7 +58,7 @@ def  GetNodes_inDist(Dist_list, nodes, dist): # return nodes which distance from
 def GetSumMaxDist(Dist_list,nodes): # return sum of dist from root to nodes; Dist_list from Djikstra, nodes from GetBuildingObjects
     m_d = 0
     for node in nodes:
-        m += Dist_list[node]
+        m_d += Dist_list[node]
     return m_d
 
 def GetGraphList():
