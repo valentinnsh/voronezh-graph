@@ -221,6 +221,25 @@ def main(args):
                     resfs = st
             print(f"Объект {GetInfo(resfs)['name']} с id = {resfs} расположен так, что расстояние между ним и самым дальним домом минимально")
 
+        # Для каждого дома определить объекты, расположенные не далее, чем в X км
+        if(args.set_distance is not None):
+            X = args.set_distance
+
+            not_far_stations = {}
+            for b in builds:
+                not_far_stations[b] = []
+                for st in stations:
+                    if res_builds[b][0][st] <= X:
+                        not_far_stations[b].append(st)
+            for b in builds:
+                if len(not_far_stations[b]) > 0:
+                    print(f"Для дома {b} следующие станции находятся ближе чем в {X} условных км досигаемости: {not_far_stations[b]}")
+                else:
+                    print(f"Для дома {b} никакие станции не находятся ближе чем в {X} условных км досигаемости")
+
+
+
+
 
 if __name__ == "__main__":
 
@@ -235,6 +254,7 @@ if __name__ == "__main__":
     parser.add_argument("--both_sides", help='Find min for both sides', action='store_true', default = None)
     parser.add_argument("--no_recalc_values", action = "store_true", default = None)
     parser.add_argument("--mindist_fs", action = "store_true", default = None)
+    parser.add_argument("--set_distance", type = float)
     args = parser.parse_args()
 
     main(args)
