@@ -11,7 +11,7 @@ def GetTree(finish_nodes, parents): # finish nodes from GetBuildingObjects, pare
             edge = (parent_node, curr_node)
             if edge not in res:
                 res.append(edge)
-            else: 
+            else:
                 break
             curr_node = parent_node
             parent_node = parents[parent_node]
@@ -34,7 +34,7 @@ def  GetMaxDist(Dist_list, nodes): # return max_dist (m_d) from root and nodes w
             m_d = Dist_list[node]
     for node in nodes:
         if Dist_list[node] == m_d:
-            res.append(node)        
+            res.append(node)
     return m_d, res
 
 def  GetMinDist(Dist_list, nodes): # return min_dist (m_d) from root and nodes with this dist; with Dist_list from Djikstra, nodes from GetBuildingObjects
@@ -45,14 +45,14 @@ def  GetMinDist(Dist_list, nodes): # return min_dist (m_d) from root and nodes w
             m_d = Dist_list[node]
     for node in nodes:
         if Dist_list[node] == m_d:
-            res.append(node)        
+            res.append(node)
     return m_d, res
 
 def  GetNodes_inDist(Dist_list, nodes, dist): # return nodes which distance from root < dist; Dist_list from Djikstra, nodes from GetBuildingObjects, dist - metr
     res = []
     for node in nodes:
         if Dist_list[node] < dist:
-            res.append(node)       
+            res.append(node)
     return res
 
 def GetSumMaxDist(Dist_list,nodes): # return sum of dist from root to nodes; Dist_list from Djikstra, nodes from GetBuildingObjects
@@ -96,7 +96,7 @@ def GetGraphList():
             distance = 1000000*((float(node1_coords[0])-float(node2_coords[0]))**2 + (float(node1_coords[1])-float(node2_coords[1]))**2)
             if (distance < min_dist):
                 min_dist = distance
-                nearest_node = node       
+                nearest_node = node
         min_dist = round(min_dist, 4)
         graph_list[building['id']].append((nearest_node,min_dist))
         graph_list[nearest_node].append((building['id'], min_dist))
@@ -149,7 +149,7 @@ def GetGraphList():
                         graph_list[v2].append((v1, distance))
                         graph_list[v1].remove(graph_list[v1][index1])
                         graph_list[v2].remove(graph_list[v2][index2])
-                        del graph_list[v]              
+                        del graph_list[v]
     print('graph is builded')
     return graph_list
 
@@ -189,7 +189,7 @@ def GetGraphListWithRead():
             distance = 1000000*((float(node1_coords[0])-float(node2_coords[0]))**2 + (float(node1_coords[1])-float(node2_coords[1]))**2)
             if (distance < min_dist):
                 min_dist = distance
-                nearest_node = node     
+                nearest_node = node
         min_dist = round(min_dist, 4)
         graph_list[building['id']].append((nearest_node,min_dist))
         graph_list[nearest_node].append((building['id'], min_dist))
@@ -242,12 +242,12 @@ def GetGraphListWithRead():
                         graph_list[v2].append((v1, distance))
                         graph_list[v1].remove(graph_list[v1][index1])
                         graph_list[v2].remove(graph_list[v2][index2])
-                        del graph_list[v]              
+                        del graph_list[v]
     print('graph is builded')
     return graph_list
 
 
-def Dijkstra(G, start_node): # Djikstra alg, return patents and dist for each node in graph list (G) from start_node 
+def Dijkstra(G, start_node): # Djikstra alg, return patents and dist for each node in graph list (G) from start_node
     dist = {}
     parent = {}
     not_matched = G.copy()
@@ -268,7 +268,7 @@ def Dijkstra(G, start_node): # Djikstra alg, return patents and dist for each no
         del not_matched[curr_node]
     return (dist, parent)
 
-def DijkstraWithFinishNodes(G, start_node, finish_nodes): # Djikstra alg, return patents and dist for each node in graph list (G) from start_node 
+def DijkstraWithFinishNodes(G, start_node, finish_nodes): # Djikstra alg, return patents and dist for each node in graph list (G) from start_node
     dist = {}
     parent = {}
     not_matched = G.copy()
@@ -277,6 +277,8 @@ def DijkstraWithFinishNodes(G, start_node, finish_nodes): # Djikstra alg, return
         dist[node] = float('inf')
         parent[node] = '-'
     dist[start_node] = 0
+    #print('1550065171'  in G.keys())
+    #return
     while (len(f_nodes) > 0):
         min_dist = float('inf')
         for node in not_matched:
@@ -284,7 +286,8 @@ def DijkstraWithFinishNodes(G, start_node, finish_nodes): # Djikstra alg, return
                 curr_node = node
                 min_dist = dist[node]
         for node in G[curr_node]:
-            if (dist[node[0]] > dist[curr_node] + node[1]):
+            #print(start_node, node[0], curr_node)
+            if (node[0] in G.keys())and(dist[node[0]] > dist[curr_node] + node[1]):
                 dist[node[0]] = dist[curr_node] + node[1]
                 parent[node[0]] = curr_node
         del not_matched[curr_node]
@@ -297,7 +300,5 @@ def GetWeightsDist(Dist_list, f_nodes):
     for f_node in f_nodes:
         if f_node in weights.keys():
             Dist_list[f_node] *= weights[f_node]
-        else: 
+        else:
             Dist_list[f_node] *= random.random()
-
-
