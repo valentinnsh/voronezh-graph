@@ -36,8 +36,8 @@ def Get_k_Clusters(nodes, G, k): # creates a partition into k clusters, result =
                         continue
                     else:
                         for node_1 in cluster_1:
-                            if dist[node][node_1] >= clust_dist[res.index(cluster_1)]:
-                                clust_dist[res.index(cluster_1)] = dist[node][node_1]
+                            if max(dist[node][node_1], dist[node_1][node]) >= clust_dist[res.index(cluster_1)]:
+                                clust_dist[res.index(cluster_1)] = max(dist[node][node_1], dist[node_1][node])
             min_clust_dist = min(clust_dist)
             if (min_clust_dist < min_dist):
                 min_dist = min_clust_dist
@@ -84,8 +84,8 @@ def Get_Dendro_matr(nodes, G): # creates matrix of linkage for scipy.hierarchy.d
                         continue
                     else:
                         for node_1 in cluster_1:
-                            if dist[node][node_1] >= clust_dist[res.index(cluster_1)]:
-                                clust_dist[res.index(cluster_1)] = dist[node][node_1]
+                            if max(dist[node][node_1], dist[node_1][node]) >= clust_dist[res.index(cluster_1)]:
+                                clust_dist[res.index(cluster_1)] = max(dist[node][node_1], dist[node_1][node])
             min_clust_dist = min(clust_dist)
             if (min_clust_dist < min_dist):
                 min_dist = min_clust_dist
