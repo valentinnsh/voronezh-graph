@@ -1,6 +1,7 @@
 import xmlparser
 import random
 import saveload
+import heapq
 
 def GetTree(finish_nodes, parents): # finish nodes from GetBuildingObjects, parents - Parent from Djikstra
     res = []
@@ -305,6 +306,26 @@ def DijkstraWithFinishNodes(G, start_node, finish_nodes): # Djikstra alg, return
         del not_matched[curr_node]
         if curr_node in f_nodes:
             f_nodes.remove(curr_node)
+    return (dist, parent)
+
+def DijkstraWihHeap(G, start_node): # Djikstra alg, return patents and dist for each node in graph list (G) from start_node
+    dist = {}
+    parent = {}
+    for node in G.keys():
+        dist[node] = float('inf')
+        parent[node] = '-' 
+    dist[start_node] = 0.
+    queue = []
+    heapq.heappush(queue, (start_node,0))
+    while (len(queue) > 0):
+        (node,d) = heapq.heappop(queue)
+        if d > dist[node]:
+            continue
+        for nd in G[node]:
+            if (dist[node] + nd[1] < dist[nd[0]]):
+                dist[nd[0]] = dist[node] + nd[1]
+                parent[nd[0]] = node
+                heapq.heappush(queue,(nd[0],dist[nd[0]]))
     return (dist, parent)
 
 def GetWeightsDist(Dist_list, f_nodes):
