@@ -260,6 +260,80 @@ def main(args):
                     print(f"Для дома {b} следующие станции находятся ближе чем в {X} условных км досигаемости(при необходимости возвращения): {not_far_stations[b]}")
                 else:
                     print(f"Для дома {b} никакие станции не находятся ближе чем в {X} условных км досигаемости(при необходимости возвращения)")
+    # Вторая часть Исследовательской работы. Кластеры--------------------------------------------------------------------------------------------
+    if(args.data_for_clusters is not None):
+        n = args.data_for_clusters[0]
+        # Pick random n buildings and 1 firestation
+        builds, station = GetBuildingsObjects(args.data_for_clusters[0],n ,1)
+
+        # Lets build a tree
+        station = station[0]
+        dij = graph.DijkstraWithFinishNodes(G, station, builds)
+        tree = graph.GetTree(builds, dij[1])
+
+        # Тут наверно надо нарисовать дерево
+
+        # Считаем длину дерева
+        treelen = graph.GetSumOfTree(tree, G) # return sum of tree; edges - from GetTree, adj_list from GetGraphList
+
+        # Считаем сумму кратчайших расстояний
+        that_sum = 0
+        for el in dij[0]:
+            if(dij[0][el] != float('inf')):
+                that_sum+= dij[0][el]
+
+        print(f"Сумма кратчайших расстояний равна {that_sum}")
+
+
+        res_builds = {}
+        res_stations = {}
+        mindist_from_builds = {}
+        mindist_from_stations = {}
+
+        #Сюда идет исследование для К = 2,3,4
+
+        K = [2] #3,4]
+
+        for k in K:
+            clu = clusters.Get_k_Clusters(builds, G, k)
+
+            # Поиск центроид
+            print("начался поиск центроид")
+            center = clusters.Find_Centers(clu, G)
+            print("Центроиды: ",center)
+
+            # Поиск кратчайших путей в кластерах
+            pos = 0
+            for c in clu:
+                ccen = center[pos] # центроида этого кластера
+
+                cdij =  graph.DijkstraWithFinishNodes(G, ccen, c)
+                ctree = graph.GetTree(c, cdij[1])
+
+                # Считаем длину дерева
+                ctreelen = graph.GetSumOfTree(ctree, G)
+                print(f"Для {pos}-го кластера длина дерева равна {ctreelen}")
+
+                # Считаем сумму кратчайших расстояний
+                csum = 0
+                for el in cdij[0]:
+                    if(cdij[0][el]!=float('inf')):
+                        csum+= cdij[0][el]
+
+                print(f"Сумма кратчайших расстояний для {pos}-го кластера равна {csum}")
+                pos+=1
+    # Построение Дендрограммы
+    if(args.dendrogram is not None):
+        n = args.dendrogram[0]
+        # Pick random n buildings and 1 firestation
+        builds, station = GetBuildingsObjects(args.dendrogram[0],n ,1)
+
+        plt.figure()
+        dn = hierarchy.dendrogram(clusters.Get_Dendro_matr(builds, G))
+        plt.savefig('foo.pdf')
+
+        #if(args.no_recalc_values is None):
+         #   print("here we go")
 
 if __name__ == "__main__":
 
@@ -272,9 +346,15 @@ if __name__ == "__main__":
     parser.add_argument("--sum_of_tree", help='Find firestation with lowest sum of tree of shortest paths', action='store_true', default = None)
     parser.add_argument("--sum_of_paths", help='Find firestation with lowest sum of shortest paths', action='store_true', default = None)
     parser.add_argument("--both_sides", help='Find min for both sides', action='store_true', default = None)
-    parser.add_argument("--no_recalc_values", action = "store_true", default = None)
-    parser.add_argument("--mindist_fs", action = "store_true", default = None)
-    parser.add_argument("--set_distance", type = float)
+    parser.add_argument("--no_recalc_values", action = "store_true", default = None, help = "TODO")
+    parser.add_argument("--mindist_fs", action = "store_true", default = None, help = "TODO")
+    parser.add_argument("--set_distance", type = float, help = "TODO")
+
+    # Clasters
+
+    parser.add_argument("-dfc", "--data_for_clusters", help="Write buildings number, than seed.", type = int, nargs=2)
+    parser.add_argument("-dg", "--dendrogram", help = "Write buildings number, than seed.", type = int, nargs = 2)
+
     args = parser.parse_args()
 
     main(args)
