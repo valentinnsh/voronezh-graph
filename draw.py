@@ -176,5 +176,37 @@ def redraw_current():
     fig.set_size_inches(100, 100, forward=True)
     fig.savefig('classic_Voronezh_2.png', dpi=100)
 
-redraw_current()
+
+def draw_tree(tree, name):
+    fig = saveload.load_obj('fig_demo')
+    fig.set_size_inches(100, 100, forward=True)
+    node_coords = saveload.load_obj("coords")
+
+    for e in tree:
+        a = e[0]
+        b = e[1]
+
+        a_coords = (float(node_coords[e[0]][0]),float(node_coords[e[0]][1]))
+        b_coords = (float(node_coords[e[1]][0]),float(node_coords[e[1]][1]))
+        plt.plot((float(a_coords[0]), float(b_coords[0])), (float(a_coords[1]), float(b_coords[1])), '-r')
+   fig.savefig(name, dpi = 100)
+
+def draw_clusters_with_centers(clu, cen, name):
+    fig = saveload.load_obj('fig_demo')
+    fig.set_size_inches(100, 100, forward=True)
+    node_coords = saveload.load_obj("coords")
+
+    for c in clu:
+        for v in c:
+            v_coords = (float(node_coords[v][0]),float(node_coords[v][1]))
+            plt.scatter(float(v_coords[0]),float(v_coords[1]),linewidths=20,c = "black")
+    for v in cen:
+        v_coords = (float(node_coords[v][0]),float(node_coords[v][1]))
+        plt.scatter(float(v_coords[0]),float(v_coords[1]),linewidths=20,c = "red")
+
+    fig.savefig(name, dpi = 100)
+
+
+
+#redraw_current()
 #draw_city_graph_rebrand('adj_list_47')

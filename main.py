@@ -264,7 +264,7 @@ def main(args):
     if(args.data_for_clusters is not None):
         n = args.data_for_clusters[0]
         # Pick random n buildings and 1 firestation
-        builds, station = GetBuildingsObjects(args.data_for_clusters[0],n ,1)
+        builds, station = GetBuildingsObjects(args.data_for_clusters[1],n ,1)
 
         # Lets build a tree
         station = station[0]
@@ -334,6 +334,153 @@ def main(args):
 
         #if(args.no_recalc_values is None):
          #   print("here we go")
+    if(args.get_2_3_5_clusters is not None):
+        n = args.get_2_3_5_clusters[0]
+        # Pick random n buildings and 1 firestation
+        builds, station = GetBuildingsObjects(args.get_2_3_5_clusters[1],n ,1)
+        print(len(builds))
+        print(station)
+        print('-'*25)
+
+        #res_5, res_3, res_2, dendromatr = clusters.Get_Clusters(builds, G)
+        #Сюда идет исследование для К = 2,3,4
+
+        K = [5]
+
+        for k in K:
+            print(k)
+            clu = None
+            if(k == 2):
+                clu = sl.load_obj("res_2")
+            else:
+                clu = clusters.Get_k_Clusters(builds, G, k)
+                sl.save_obj(clu, "res_"+str(k))
+
+            # Поиск центроид
+            print("начался поиск центроид")
+            center = clusters.Find_Centers(clu, G)
+            sl.save_obj(center,"center" + str(k))
+            print("Центроиды: ",center)
+
+            # Дерево кратчайших путей от станции до центроидов
+            #fs_to_cen = sl.load_obj("fs_to_cen_"+str(k))
+            fs_to_cen = graph.DijkstraWithFinishNodes(G, station[0], center)
+            fs_to_cen_tree = graph.GetTree(center,fs_to_cen[1])
+            #fs_to_cen_tree = sl.load_obj("fs_to_cen_tree_"+str(k))
+            sl.save_obj(fs_to_cen, "fs_to_cen_"+str(k))
+            sl.save_obj(fs_to_cen_tree, "fs_to_cen_tree_"+str(k))
+
+
+            # Сумма кратчайших расстояний
+            that_sum = 0
+            for el in fs_to_cen[0]:
+                if(fs_to_cen[0][el] != float('inf')):
+                    that_sum+= fs_to_cen[0][el]
+
+            print(f"Сумма кратчайших расстояний равна {that_sum}")
+            # Поиск кратчайших путей в кластерах
+            pos = 0
+            for c in clu:
+                ccen = center[pos] # центроида этого кластера
+
+                cdij =  graph.DijkstraWithFinishNodes(G, ccen, c)
+                sl.save_obj(cdij,"cdij"+str(k)+str(pos))
+                ctree = graph.GetTree(c, cdij[1])
+                sl.save_obj(ctree,"ctree"+str(k)+str(pos))
+
+                # Считаем длину дерева
+                ctreelen = graph.GetSumOfTree(ctree, G)
+
+                print(f"Для {pos}-го кластера длина дерева равна {ctreelen}")
+
+
+
+                # Считаем сумму кратчайших расстояний
+                #csum = 0
+                #for el in cdij[0]:
+                 #   if(cdij[0][el]!=float('inf')):
+                  #      csum+= cdij[0][el]
+
+
+                  #print(f"Сумма кратчайших расстояний для {pos}-го кластера равна {csum}")
+                pos+=1
+        #sl.save_obj(res_5,"res_5")
+        #sl.save_obj(res_3,"res_3")
+        #sl.save_obj(res_2,"res_2")
+
+        #sl.save_obj(dendromatr, "dendromatr")
+
+    if(args.get_2_3_5_clusters_load is not None):
+        n = args.get_2_3_5_clusters[0]
+        # Pick random n buildings and 1 firestation
+        builds, station = GetBuildingsObjects(args.get_2_3_5_clusters[1],n ,1)
+        print(len(builds))
+        print(station)
+        print('-'*25)
+
+        #res_5, res_3, res_2, dendromatr = clusters.Get_Clusters(builds, G)
+        #Сюда идет исследование для К = 2,3,4
+
+        K = [5]
+
+        for k in K:
+            print(k)
+            clu = None
+            if(k == 2):
+                clu = sl.load_obj("res_2")
+            else:
+                clu = clusters.Get_k_Clusters(builds, G, k)
+                sl.save_obj(clu, "res_"+str(k))
+
+            # Поиск центроид
+            print("начался поиск центроид")
+            center = clusters.Find_Centers(clu, G)
+            sl.save_obj(center,"center" + str(k))
+            print("Центроиды: ",center)
+
+            # Дерево кратчайших путей от станции до центроидов
+            #fs_to_cen = sl.load_obj("fs_to_cen_"+str(k))
+            fs_to_cen = graph.DijkstraWithFinishNodes(G, station[0], center)
+            fs_to_cen_tree = graph.GetTree(center,fs_to_cen[1])
+            #fs_to_cen_tree = sl.load_obj("fs_to_cen_tree_"+str(k))
+            sl.save_obj(fs_to_cen, "fs_to_cen_"+str(k))
+            sl.save_obj(fs_to_cen_tree, "fs_to_cen_tree_"+str(k))
+
+
+            # Сумма кратчайших расстояний
+            that_sum = 0
+            for el in fs_to_cen[0]:
+                if(fs_to_cen[0][el] != float('inf')):
+                    that_sum+= fs_to_cen[0][el]
+
+            print(f"Сумма кратчайших расстояний равна {that_sum}")
+            # Поиск кратчайших путей в кластерах
+            pos = 0
+            for c in clu:
+                ccen = center[pos] # центроида этого кластера
+
+                cdij =  graph.DijkstraWithFinishNodes(G, ccen, c)
+                sl.save_obj(cdij,"cdij"+str(k)+str(pos))
+                ctree = graph.GetTree(c, cdij[1])
+                sl.save_obj(ctree,"ctree"+str(k)+str(pos))
+
+                # Считаем длину дерева
+                ctreelen = graph.GetSumOfTree(ctree, G)
+
+                print(f"Для {pos}-го кластера длина дерева равна {ctreelen}")
+
+
+
+                # Считаем сумму кратчайших расстояний
+                #csum = 0
+                #for el in cdij[0]:
+                 #   if(cdij[0][el]!=float('inf')):
+                  #      csum+= cdij[0][el]
+
+
+                  #print(f"Сумма кратчайших расстояний для {pos}-го кластера равна {csum}")
+                pos+=1
+
 
 if __name__ == "__main__":
 
@@ -354,6 +501,8 @@ if __name__ == "__main__":
 
     parser.add_argument("-dfc", "--data_for_clusters", help="Write buildings number, than seed.", type = int, nargs=2)
     parser.add_argument("-dg", "--dendrogram", help = "Write buildings number, than seed.", type = int, nargs = 2)
+    parser.add_argument("-g235", "--get_2_3_5_clusters", help = "Get clusters for k = 2,3,5", type = int, nargs = 2)
+    parser.add_argument("-g235l", "--get_2_3_5_clusters_load", help = "Get clusters for k = 2,3,5 with load", type = int, nargs = 2)
 
     args = parser.parse_args()
 
