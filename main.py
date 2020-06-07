@@ -345,7 +345,7 @@ def main(args):
         #res_5, res_3, res_2, dendromatr = clusters.Get_Clusters(builds, G)
         #Сюда идет исследование для К = 2,3,4
 
-        K = [5]
+        K = [2,3,5]
 
         for k in K:
             print(k)
@@ -421,7 +421,7 @@ def main(args):
         #res_5, res_3, res_2, dendromatr = clusters.Get_Clusters(builds, G)
         #Сюда идет исследование для К = 2,3,4
 
-        K = [5]
+        K = [2,3, 5]
 
         for k in K:
             print(k)
